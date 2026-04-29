@@ -1,6 +1,12 @@
 import { getConnection, sql } from "../../configs/sqlServer.js";
 
-export const createUser = async ({ name, lastName, email, password, role = "USER" }) => {
+export const createUser = async ({
+    name,
+    lastName,
+    email,
+    password,
+    role = "USER"
+}) => {
     const pool = getConnection();
 
     const result = await pool.request()
@@ -10,9 +16,31 @@ export const createUser = async ({ name, lastName, email, password, role = "USER
         .input("password", sql.VarChar(255), password)
         .input("role", sql.VarChar(50), role)
         .query(`
-            INSERT INTO Users (name, lastName, email, password, role)
-            OUTPUT INSERTED.id, INSERTED.name, INSERTED.lastName, INSERTED.email, INSERTED.role
-            VALUES (@name, @lastName, @email, @password, @role)
+            INSERT INTO Users (
+                name,
+                lastName,
+                email,
+                password,
+                role
+            )
+            OUTPUT 
+                INSERTED.id,
+                INSERTED.name,
+                INSERTED.lastName,
+                INSERTED.email,
+                INSERTED.role,
+                INSERTED.dateCreation,
+                INSERTED.canAdd,
+                INSERTED.canView,
+                INSERTED.canDelete,
+                INSERTED.canUpdate
+            VALUES (
+                @name,
+                @lastName,
+                @email,
+                @password,
+                @role
+            )
         `);
 
     return result.recordset[0];
@@ -30,7 +58,12 @@ export const findUserByEmail = async (email) => {
                 lastName,
                 email,
                 password,
-                role
+                role,
+                dateCreation,
+                canAdd,
+                canView,
+                canDelete,
+                canUpdate
             FROM Users
             WHERE email = @email
         `);
@@ -62,7 +95,16 @@ export const findUserById = async (id) => {
     return result.recordset[0];
 };
 
-export const updateUserById = async (id, { name, lastName, email, role }) => {
+export const updateUserById = async (id, {
+    name,
+    lastName,
+    email,
+    role,
+    canAdd,
+    canView,
+    canDelete,
+    canUpdate
+}) => {
     const pool = getConnection();
 
     const result = await pool.request()
@@ -71,13 +113,32 @@ export const updateUserById = async (id, { name, lastName, email, role }) => {
         .input("lastName", sql.VarChar(100), lastName)
         .input("email", sql.VarChar(150), email.toLowerCase())
         .input("role", sql.VarChar(50), role)
+        .input("canAdd", sql.Bit, canAdd)
+        .input("canView", sql.Bit, canView)
+        .input("canDelete", sql.Bit, canDelete)
+        .input("canUpdate", sql.Bit, canUpdate)
         .query(`
             UPDATE Users
-            SET name = @name,
+            SET 
+                name = @name,
                 lastName = @lastName,
                 email = @email,
-                role = @role
-            OUTPUT INSERTED.id, INSERTED.name, INSERTED.lastName, INSERTED.email, INSERTED.role
+                role = @role,
+                canAdd = @canAdd,
+                canView = @canView,
+                canDelete = @canDelete,
+                canUpdate = @canUpdate
+            OUTPUT 
+                INSERTED.id,
+                INSERTED.name,
+                INSERTED.lastName,
+                INSERTED.email,
+                INSERTED.role,
+                INSERTED.dateCreation,
+                INSERTED.canAdd,
+                INSERTED.canView,
+                INSERTED.canDelete,
+                INSERTED.canUpdate
             WHERE id = @id
         `);
 
@@ -91,7 +152,12 @@ export const deleteUserById = async (id) => {
         .input("id", sql.Int, id)
         .query(`
             DELETE FROM Users
-            OUTPUT DELETED.id, DELETED.name, DELETED.lastName, DELETED.email, DELETED.role
+            OUTPUT 
+                DELETED.id,
+                DELETED.name,
+                DELETED.lastName,
+                DELETED.email,
+                DELETED.role
             WHERE id = @id
         `);
 

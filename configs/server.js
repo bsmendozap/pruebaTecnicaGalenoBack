@@ -4,8 +4,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { dbConnection } from './sqlServer.js';
 
-import userRoutes from '../src/users/user.routes.js'
+import userRoutes from '../src/users/user.routes.js';
 import authRoutes from "../src/auth/auth.routes.js";
+import externalRoutes from "../src/external/external.routes.js";
+import productRoutes from "../src/products/product.routes.js";
 
 class Server {
     constructor() {
@@ -14,6 +16,8 @@ class Server {
         
         this.userPath = "/api/users";
         this.authPath = "/api/auth";
+        this.externalPath = "/api/external";
+        this.productRoutes = "/api/products";
 
         this.conectarDB();
         this.middlewares();
@@ -35,6 +39,8 @@ class Server {
     routes() {
         this.app.use(this.userPath, userRoutes);
         this.app.use(this.authPath, authRoutes);
+        this.app.use(this.externalPath, externalRoutes);
+        this.app.use(this.productRoutes, productRoutes);
     }
 
     listen() {

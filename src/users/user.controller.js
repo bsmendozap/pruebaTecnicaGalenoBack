@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import { createUser, findUserByEmail, updateUserById, deleteUserById, findUserById } from "./user.model.js";
+import { createUser, findUserByEmail, updateUserById, deleteUserById } from "./user.model.js";
 
 export const register = async (req, res) => {
     try {
