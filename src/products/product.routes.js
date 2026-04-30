@@ -6,14 +6,14 @@ import { validarAdmin } from "../middlewares/validar-admin.js";
 
 const router = Router();
 
-router.get("/", validarJWT, getProducts);
+router.get("/", getProducts);
 
-router.get("/:id", validarJWT, validarAdmin, getProductoById);
+router.get("/:id", getProductoById);
 
-router.post("/", validarJWT, validarAdmin, addProduct);
+router.post("/", addProduct);
 
-router.put("/:id", validarJWT, validarAdmin, editProduct);
+router.put("/:id", editProduct);
 
-router.delete("/:id", validarJWT, validarAdmin, deletProduct);
+router.delete("/:id", deletProduct);
 
 export default router;
